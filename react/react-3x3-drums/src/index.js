@@ -1,4 +1,4 @@
-// https://facebook.github.io/react/tutorial/tutorial.html#showing-the-moves
+// next: separate components into files
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -52,6 +52,7 @@ class Game extends React.Component {
           squares: Array(9).fill(null)
         }
       ],
+      stepNumber: 0,
       xIsNext: true
     }
   }
@@ -65,6 +66,7 @@ class Game extends React.Component {
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       xIsNext: !this.state.xIsNext,
+      stepNumber: history.length,
       history: history.concat([
         {
           squares: squares
@@ -72,10 +74,25 @@ class Game extends React.Component {
       ])
     })
   }
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  }
   render() {
     const history = this.state.history;
-    const current = history[history.length - 1];
+    const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+
+    const moves = history.map((step, move) => {
+      const description = move ? `Move #${move}` : `Game Start`;
+      return (
+        <li key={ move }>
+          <a href="#" onClick={() => this.jumpTo(move)}>{ description }</a>
+        </li>
+      )
+    });
 
     let status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
     if (winner) {
@@ -84,15 +101,14 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <div className="status">{ status }</div>
           <Board 
             squares={ current.squares }
             onClick={ (i) => this.handleClick(i) }
           />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <div>{ status }</div>
+          <ol>{ moves }</ol>
         </div>
       </div>
     );
