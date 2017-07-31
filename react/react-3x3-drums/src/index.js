@@ -89,7 +89,8 @@ class Game extends React.Component {
       const description = move ? `Move #${move}` : `Game Start`;
       return (
         <li key={ move }>
-          <a href="#" onClick={() => this.jumpTo(move)}>{ description }</a>
+          <a href="#" // eslint-disable-line
+          onClick={() => this.jumpTo(move)}>{ description }</a>
         </li>
       )
     });
